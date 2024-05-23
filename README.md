@@ -52,6 +52,45 @@ To achieve this, we took the following steps:
 - The primary OMS handles executions. If the primary OMS goes down, the secondary OMS takes over.
 - The failover mechanism ensures that the order reply is processed seamlessly by the secondary OMS if the primary is unavailable.
 
+## Implementation Details
+
+### JGroups Configuration
+
+- **Default Methods**:
+  - **Heartbeat**: Assigns the primary OMS node with a heartbeat mechanism.
+  - **Watchdog**: Registers components and queries which OMS to send requests to using Falcon.
+
+### Services Registry
+
+- Integrated with **Prometheus** and **Grafana** for monitoring.
+
+### Current Implementation
+
+- **DFIX**: Requests are only processed by the primary OMS.
+
+### New Changes
+
+- **Order Identification**: Orders are now processed by the OMS that initiated them.
+- **Primary Broadcast**: The primary OMS broadcasts order events to other nodes.
+- **Synchronized Map**: We use a synchronized map to track the `clorderid` and `initiatedOMS` to ensure correct order processing.
+
+### Event Handling
+
+1. **OMS Node Connect/Disconnect**:
+   - Created new sync events to handle connections and disconnections, ensuring the map is updated.
+   - Handled through a hashmap (HM1: IP to ID, HMp2: ID to `clorderID`).
+
+### Failover Handling
+
+- If the primary OMS is down, the secondary OMS becomes the primary.
+- Order processing falls back to the primary OMS if the initiated OMS is unavailable.
+
+## Testing
+
+- Utilized **JMeter** scripts for WebSocket handler load testing.
+- Ensured system stability under expected load conditions (80-100 TPS).
+
+
 ## Challenges Faced
 
 1. **Server Allocation and Communication Issues**: Allocating new servers led to issues with JGroups messages not working due to firewall settings. Disabling the firewall resolved this issue.
