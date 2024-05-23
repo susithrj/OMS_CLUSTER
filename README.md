@@ -27,6 +27,9 @@ Our primary task was to migrate a single-leg application to an application clust
 
 ## Action
 
+![image](https://github.com/susithrj/OMS_Cluster/assets/47299475/0550a03a-097c-45c9-ab76-098e844d780c)
+
+
 To achieve this, we took the following steps:
 
 1. **Migration to Application Clusters**: We migrated the monolithic application to an application cluster to improve reliability and performance.
