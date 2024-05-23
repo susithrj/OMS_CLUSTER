@@ -105,6 +105,20 @@ The implemented system was rigorously tested under expected load conditions:
 
 The application demonstrated stable behavior and met the expected load conditions, achieving the desired throughput and supporting the client’s growth objectives.
 
+## Release Notes
+
+- **APPSVR_ID** should be unique according to the nodes.
+
+## Deep Dive
+
+1. **Cache Initialization**: New nodes initiate a cache through the default cache mechanism.
+2. **Order Processing Logic**:
+   - Orders initiated by a specific OMS are processed by that OMS.
+   - If the initiating OMS is down, the primary OMS handles the order.
+3. **Node Join/Leave Handling**:
+   - Ensured seamless order processing even when nodes join or leave the cluster.
+   - Updated and synchronized hashmaps to reflect node status changes.
+
 ## Conclusion
 
 This project successfully designed a distributed system with effective failover mechanisms, significantly enhancing execution speed and reliability. The system now supports the client's expanding user base, ensuring smooth operation and customer satisfaction.
