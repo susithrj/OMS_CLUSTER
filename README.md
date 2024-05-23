@@ -1,4 +1,4 @@
-# Achieving Peak Performance: Our Journey to 2x User Handling with Failover Systems
+# Achieving Peak Performance: Our Journey to 2x Concurrent User Handling with Failover Systems
 
 ## Summary
 
