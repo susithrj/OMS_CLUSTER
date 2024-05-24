@@ -2,7 +2,7 @@
 
 ## Summary
 
-In this project, we designed a distributed system with robust failover mechanisms to enhance execution speed by 100%. This solution was crucial to accommodate the rapid growth of customer onboarding, which had increased at a rate of 2x.
+In this project, we designed a distributed system with robust failover mechanisms to enhance execution speed by 100%. This solution was crucial to accommodate the rapid growth of customer onboarding, which had increased at a rate of 2x. #scale
 
 ## Situation
 
