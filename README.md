@@ -2,35 +2,30 @@
 
 ## Summary
 
-In this project, we designed a distributed system with robust failover mechanisms to enhance execution speed by 100%. This solution was crucial to accommodate the rapid growth of customer onboarding, which had increased at a rate of 2x. #scale
+In this project, we designed a distributed system with robust failover mechanisms to enhance throughput by 100%. This scalable solution was crucial to accommodate the rapid growth of customer onboarding, which had an estimated rate of 2x.
 
-## Situation
+## Business Requirement
 
-We received a request from LBSL Brokerage to scale the performance of their system due to rapid user growth. The goal was to handle 20 lakh orders per day within an 18,000-second window, with a peak requirement of 100 trades per second (TPS). To meet these demands, we had to design a system capable of handling increased user concurrency and load.
+We received a request from our fintech client to scale the performance of their system due to rapid user growth. The goal was to handle 2 million orders per market session, with a peak requirement of 100 transactions per second (TPS). To meet these demands, we had to design a system capable of handling increased user concurrency and load.
 
 ### Assumptions
 
-1. **First-year number of users**: 12,000
+1. **Number of users**: 12,000
 2. **Assumed concurrency**: 20%, which translates to approximately 24,000 concurrent user sessions.
 3. **User behavior**:
     - Most users watch price data without frequently trading.
     - Some users frequently navigate to portfolio/account summary widgets.
 
-## Task
-
-Our primary task was to migrate a single-leg application to an application cluster with failover capabilities to handle the increased load and ensure continuous availability.
-
-## How We Started Designing
+## Design 
 
 1. **Identify the Problem and Goals**: We first identified the problem of handling increased user load and the goal of achieving 2x performance improvement.
 2. **Understand Requirements**: We assessed the expected workload, scalability requirements, fault tolerance, and performance criteria.
 
-## Action
+Our primary task was to migrate a single-leg application to an application cluster with failover capabilities to handle the increased load and ensure continuous availability.
 
 ![image](https://github.com/susithrj/OMS_Cluster/assets/47299475/0550a03a-097c-45c9-ab76-098e844d780c)
 
-
-To achieve this, we took the following steps:
+## Implementation
 
 1. **Migration to Application Clusters**: We migrated the monolithic application to an application cluster to improve reliability and performance.
 2. **Cluster Communication with JGroups**: We used JGroups for cluster communication, implementing our business logic through its interface.
@@ -45,12 +40,14 @@ To achieve this, we took the following steps:
     - Executions were processed by the Order Management System (OMS) where the customer was available.
 6. **JMeter for Load Testing**: We used JMeter scripts for load testing the WebSocket handler.
 
-### Forward Flow
+## System Behaviour 
+
+### Forward Flow (Request - Response)
 
 - The routing logic ensures users are distributed evenly across nodes using a modulo operation on the customer ID.
 - Users stay on their assigned nodes, and executions are processed by the OMS associated with the customer.
 
-### Backward Flow
+### Backward Flow (Push)
 
 - The primary OMS handles executions. If the primary OMS goes down, the secondary OMS takes over.
 - The failover mechanism ensures that the order reply is processed seamlessly by the secondary OMS if the primary is unavailable.
@@ -61,18 +58,11 @@ To achieve this, we took the following steps:
 
 - **Default Methods**:
   - **Heartbeat**: Assigns the primary OMS node with a heartbeat mechanism.
-  - **Watchdog**: Registers components and queries which OMS to send requests to using Falcon.
-
-### Services Registry
-
-- Integrated with **Prometheus** and **Grafana** for monitoring.
+  - each node has a dedicated id.
 
 ### Current Implementation
 
 - **DFIX**: Requests are only processed by the primary OMS.
-
-### New Changes
-
 - **Order Identification**: Orders are now processed by the OMS that initiated them.
 - **Primary Broadcast**: The primary OMS broadcasts order events to other nodes.
 - **Synchronized Map**: We use a synchronized map to track the `clorderid` and `initiatedOMS` to ensure correct order processing.
@@ -81,7 +71,7 @@ To achieve this, we took the following steps:
 
 1. **OMS Node Connect/Disconnect**:
    - Created new sync events to handle connections and disconnections, ensuring the map is updated.
-   - Handled through a hashmap (HM1: IP to ID, HMp2: ID to `clorderID`).
+   - Handled through a hashmap (HM1: IP to ID, HM2: ID to `clorderID`).
 
 ### Failover Handling
 
@@ -110,7 +100,7 @@ The implemented system was rigorously tested under expected load conditions:
 - **Load Test Results**:
   - Target Throughput: 80-100 Transactions Per Second (TPS)
 
-The application demonstrated stable behavior and met the expected load conditions, achieving the desired throughput and supporting the client’s growth objectives.
+The application demonstrated stable behaviour and met the expected load conditions, achieving the desired throughput and supporting the client’s growth objectives.
 
 ## Release Notes
 
