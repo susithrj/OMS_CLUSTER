@@ -1,4 +1,4 @@
-# Achieving Peak Performance: Our Journey to 2x Concurrent User Handling with Failover Systems
+# Achieving Peak Performance: Our Journey to 2x Concurrent User Handling
 
 ## Summary
 
@@ -49,7 +49,8 @@ Our primary task was to migrate a single-leg application to an application clust
 
 ### Backward Flow (Push)
 
-- The primary OMS handles executions. If the primary OMS goes down, the secondary OMS takes over.
+- Phase 1 - The primary OMS handles executions. If the primary OMS goes down, the secondary OMS takes over.
+- Phase 2 - executions are handled by customer-assigned OMS. 
 - The failover mechanism ensures that the order reply is processed seamlessly by the secondary OMS if the primary is unavailable.
 
 ## Implementation Details
@@ -62,7 +63,7 @@ Our primary task was to migrate a single-leg application to an application clust
 
 ### Current Implementation
 
-- **DFIX**: Requests are only processed by the primary OMS.
+- **DFIX**: executions are written to both OMS nodes.
 - **Order Identification**: Orders are now processed by the OMS that initiated them.
 - **Primary Broadcast**: The primary OMS broadcasts order events to other nodes.
 - **Synchronized Map**: We use a synchronized map to track the `clorderid` and `initiatedOMS` to ensure correct order processing.
